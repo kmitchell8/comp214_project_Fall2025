@@ -13,13 +13,16 @@ const dotenv = require('dotenv');
 const { initialize, closePool } = require('./db');
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT  || 3000;
+const PORT = process.env.PORT || 3000;
 
 //API Routes
 
-//const contactRoutes = require('./routes/contactRoutes');
+//const contactRoutes = require('./routes/contactRoutes'); //future reference
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 
 //MIDDLEWARE
 
@@ -29,6 +32,9 @@ app.use(cookieParser());
 //app.use(bodyParser.json());  //handled by express.json
 //enabling the API routes
 //app.use('/api/contacts', contactRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/jobs', jobRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', authRoutes);
 
@@ -53,9 +59,12 @@ async function startServer() {
         await initialize();
 
         // Start listening for HTTP requests
-       server = app.listen(PORT, () => {
+        server = app.listen(PORT, () => {
             console.log(`Server is running at http://localhost:${PORT}`);
-           //console.log(`Contacts are visible at http://localhost:${PORT}${'/api/contacts'}`);
+            //console.log(`Contacts are visible at http://localhost:${PORT}${'/api/contacts'}`);
+            console.log(`Departments are visible at http://localhost:${PORT}${'/api/departments'}`);
+            console.log(`Employees are visible at http://localhost:${PORT}${'/api/employees'}`);
+            console.log(`Jobs are visible at http://localhost:${PORT}${'/api/jobs'}`);
             console.log(`Users are visible at http://localhost:${PORT}${'/api/users'}`);
             console.log(`Authentications are visible at http://localhost:${PORT}${'/api/auth'}`);
         })

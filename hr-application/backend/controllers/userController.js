@@ -1,5 +1,5 @@
 /*
- * File Name: server.js
+ * File Name: userController.js
  * Author(s): 
  * Student ID (s): 
  * Date: 
@@ -12,17 +12,16 @@ const { executeQuery, hashPassword } = require('../db'); // Import Oracle DB uti
 // Define the name of your user table
 const USER_TABLE = 'USERS'; 
 
-// --- Core Parameter Middleware ---
+//Core Parameter Middleware 
 
-/**
- * Middleware to pre-load a user profile based on the 'userId' parameter in the route.
- * Replaces Mongoose's .findById().
- */
+// Middleware to pre-load a user profile based on the 'userId' parameter in the route.
+//Replaces Mongoose's .findById().
+
 const userByID = async (req, res, next, id) => {
     try {
         // SQL to select the user by USER_ID. We explicitly exclude the PASSWORD hash.
         const sql = `
-            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATEDAT, UPDATEDAT 
+            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATED_AT, UPDATED_AT 
             FROM ${USER_TABLE} 
             WHERE USER_ID = :id
         `;
@@ -47,7 +46,7 @@ const userByID = async (req, res, next, id) => {
     }
 };
 
-// --- Single User Secure CRUD Operations ---
+//Single User Secure CRUD Operations 
 
 // GET: Read the non-sensitive profile data of the user loaded by userByID
 const read = (req, res) => {
@@ -91,8 +90,8 @@ const update = async (req, res, next) => {
             bindParams[paramName] = value;
         }
 
-        // 3. Add the UPDATEDAT timestamp and the WHERE clause
-        updateSqlParts.push(`UPDATEDAT = CURRENT_TIMESTAMP`);
+        // 3. Add the UPDATED_AT timestamp and the WHERE clause
+        updateSqlParts.push(`UPDATED_AT = CURRENT_TIMESTAMP`);
         bindParams.id = req.profile.USER_ID;
 
         const updateSql = `
@@ -106,7 +105,7 @@ const update = async (req, res, next) => {
         // 4. Retrieve the updated user data to send back
         // We reuse the userByID logic's SQL to ensure the response is correct
         const readSql = `
-            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATEDAT, UPDATEDAT 
+            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATED_AT, UPDATED_AT 
             FROM ${USER_TABLE} 
             WHERE USER_ID = :id
         `;
@@ -160,7 +159,7 @@ const list = async (req, res) => {
     try {
         // Select safe fields only (excluding the PASSWORD hash)
         const sql = `
-            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATEDAT, UPDATEDAT 
+            SELECT USER_ID, USERNAME, EMAIL, ROLE, CREATED_AT, UPDATED_AT 
             FROM ${USER_TABLE} 
             ORDER BY USER_ID
         `;

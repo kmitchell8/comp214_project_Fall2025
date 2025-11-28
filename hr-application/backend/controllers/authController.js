@@ -1,5 +1,5 @@
 /*
- * File Name: server.js
+ * File Name: authController.js
  * Author(s): 
  * Student ID (s): 
  * Date: 
@@ -60,10 +60,10 @@ const register = async (req, res) => {
             outFormat: oracledb.OUT_FORMAT_OBJECT
         });
         
-        // The generated ID is in result.outBinds.id[0]
+        //The generated ID is in result.outBinds.id[0]
         const newUserId = result.outBinds.id[0];
 
-        // Send back a sanitized user object
+        //Send back a sanitized user object
         res.status(201).json({ 
             user: { 
                 USER_ID: newUserId, 
@@ -76,7 +76,7 @@ const register = async (req, res) => {
 
     } catch (err) {
         console.error('Oracle Registration Error:', err);
-        // Handle constraint violations or other SQL errors
+        //Handle constraint violations or other SQL errors
         res.status(500).json({ error: "Registration failed due to a server error: " + err.message });
     }
 };
@@ -137,7 +137,7 @@ const signout = (req, res) => {
 };
 
 
-// Middleware
+//Middleware
 //requireSignin
 const requireSignin = expressjwt({
     secret: config.jwtSecret,
@@ -148,12 +148,12 @@ const requireSignin = expressjwt({
 
 //hasAuthorization
 const hasAuthorization = (req, res, next) => {
-    // req.profile comes from a user-specific lookup route/middleware (not shown here)
-    // We check if the profile ID (from the URL/lookup) matches the auth ID (from the token)
+    //req.profile comes from a user-specific lookup route/middleware (not shown here)
+    //We check if the profile ID (from the URL/lookup) matches the auth ID (from the token)
     const isOwner = req.profile && req.auth &&
         (req.profile.USER_ID.toString() === req.auth.USER_ID.toString());
         
-    // Check for admin role
+    //Check for admin role
     const isAdmin = req.auth && req.auth.role === 'admin';
     
     const authorized = isOwner || isAdmin;
