@@ -6,17 +6,18 @@
  */
 
 
-const oracledb = require('oracledb'); //Needed for binding options
+const oracledb = require('oracledb'); //Needed for binding options //cannot be accessed in the scope of this program
+//I will leave it for future use however it is explicitly called in employeeByID to resolve that access issue
 const _ = require('lodash'); //Used for cleaning up request bodies
 const { executeQuery } = require('../db'); //Import Oracle DB utilities 
 
 //Define the name of your employee table
-const EMPLOYEE_TABLE = 'HR_employees'; 
+const EMPLOYEE_TABLE = 'HR_employees';
 
 //Core Parameter Middleware
 
 //Middleware to pre-load an employee based on the 'employeeId' parameter in the route.
- 
+
 const employeeByID = async (req, res, next, id) => {
     try {
         // SQL to select the employee by EMPLOYEE_ID.
@@ -26,8 +27,10 @@ const employeeByID = async (req, res, next, id) => {
             FROM ${EMPLOYEE_TABLE} 
             WHERE EMPLOYEE_ID = :id
         `;
-        const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        
+        //const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        //had to put require('oracledb') inside the function as the global variable was not being accessed.
+        const result = await executeQuery(sql, [id], { outFormat: require('oracledb').OUT_FORMAT_OBJECT });
+
         const employee = result.rows[0];
 
         if (!employee) {
@@ -35,7 +38,7 @@ const employeeByID = async (req, res, next, id) => {
                 error: "Employee not found"
             });
         }
-        
+
         //Attach the found employee object to the request.
         req.employee = employee;
         next();
@@ -59,20 +62,13 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
     //Collect updates from the request body. Only update fields defined in schema.
     const allowedUpdates = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        phone_number: req.body.phone_number,
-        hire_date: req.body.hire_date,
-        job_id: req.body.job_id,
-        salary: req.body.salary,
-        commission_pct: req.body.commission_pct,
-        manager_id: req.body.manager_id,
-        department_id: req.body.department_id
+        EMAIL: req.body.EMAIL, 
+        PHONE_NUMBER: req.body.PHONE_NUMBER,
+        SALARY: req.body.SALARY,
     };
 
     //Filter out undefined/null values
-    const updates = _.pickBy(allowedUpdates, _.identity); 
+    const updates = _.pickBy(allowedUpdates, _.identity);
 
     if (Object.keys(updates).length === 0) {
         return res.status(400).json({ error: "No valid fields provided for update." });
@@ -86,8 +82,9 @@ const update = async (req, res, next) => {
         //Process field updates
         for (const [key, value] of Object.entries(updates)) {
             const paramName = `p${bindCount++}`;
-            updateSqlParts.push(`${key.toUpperCase()} = :${paramName}`);
-            bindParams[paramName] = value;
+           // updateSqlParts.push(`${key.toUpperCase()} = :${paramName}`);//redundant after formatting "allowedupdates" but i'll leave it in
+           updateSqlParts.push(`${key} = :${paramName}`); 
+           bindParams[paramName] = value;
         }
 
         //Add the WHERE clause
@@ -98,7 +95,7 @@ const update = async (req, res, next) => {
             SET ${updateSqlParts.join(', ')} 
             WHERE EMPLOYEE_ID = :id
         `;
-        
+
         await executeQuery(updateSql, bindParams, { autoCommit: true });
 
         //Retrieve the updated employee data to send back
@@ -109,7 +106,7 @@ const update = async (req, res, next) => {
             WHERE EMPLOYEE_ID = :id
         `;
         const result = await executeQuery(readSql, [req.employee.EMPLOYEE_ID], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        
+
         res.json(result.rows[0]);
 
     } catch (err) {
@@ -123,17 +120,17 @@ const update = async (req, res, next) => {
 //DELETE: Remove the employee
 const remove = async (req, res, next) => {
     try {
-        const employeeId = req.employee.EMPLOYEE_ID; 
-        
+        const employeeId = req.employee.EMPLOYEE_ID;
+
         const deleteSql = `DELETE FROM ${EMPLOYEE_TABLE} WHERE EMPLOYEE_ID = :id`;
-        const result = await executeQuery(deleteSql, [employeeId], { autoCommit: true }); 
+        const result = await executeQuery(deleteSql, [employeeId], { autoCommit: true });
 
         if (result.rowsAffected === 0) {
-             return res.status(404).json({ error: "Employee not found for deletion." });
+            return res.status(404).json({ error: "Employee not found for deletion." });
         }
-        
+
         //Return a confirmation message
-        res.json({ message: `Employee ${employeeId} successfully deleted.`});
+        res.json({ message: `Employee ${employeeId} successfully deleted.` });
 
     } catch (err) {
         console.error('Oracle Delete Error:', err);
@@ -151,38 +148,35 @@ const create = async (req, res) => {
     try {
         // Construct the INSERT statement
         const sql = `
-            INSERT INTO ${EMPLOYEE_TABLE} (
-                EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, 
-                HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
-            ) VALUES (
-                :employee_id, :first_name, :last_name, :email, :phone_number,
-                :hire_date, :job_id, :salary, :commission_pct, :manager_id, :department_id
-            )
-        `;
+      BEGIN employee_hire_sp(
+        :p_first_name, :p_last_name, :p_email, :p_phone_number,
+        :p_hire_date, :p_job_id, :p_salary, :p_commission_pct,
+        :p_manager_id, :p_department_id
+      ); END;
+    `;
 
         //Bind parameters from request body
         const binds = {
-            employee_id: req.body.employee_id, //Assuming ID is passed or you can use a sequence in SQL
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
-            email: req.body.email,
-            phone_number: req.body.phone_number,
-            hire_date: req.body.hire_date ? new Date(req.body.hire_date) : new Date(), //Default to now if empty
-            job_id: req.body.job_id,
-            salary: req.body.salary,
-            commission_pct: req.body.commission_pct,
-            manager_id: req.body.manager_id,
-            department_id: req.body.department_id
+            p_first_name: req.body.firstName || req.body.first_name,
+            p_last_name: req.body.lastName || req.body.last_name,
+            p_email: req.body.email,
+            p_phone_number: req.body.phone || req.body.phone_number,
+            p_hire_date: req.body.hireDate ? new Date(req.body.hireDate) : new Date(),  //Default to now if empty
+            p_job_id: req.body.jobId || req.body.job_id,
+            p_salary: req.body.salary,
+            p_commission_pct: req.body.commission_pct || null,
+            p_manager_id: req.body.managerId || req.body.manager_id,
+            p_department_id: req.body.departmentId || req.body.department_id
         };
 
         await executeQuery(sql, binds, { autoCommit: true });
 
-        res.status(201).json({ message: "Employee created successfully." });
+        res.status(201).json({ message: "Employee hired successfully." });
 
     } catch (err) {
         console.error('Oracle Create Error:', err);
         return res.status(400).json({
-            error: "Could not create employee: " + err.message
+            error: "Could not hire employee with this procedure: " + err.message
         });
     }
 };
@@ -198,7 +192,7 @@ const list = async (req, res) => {
         `;
         //Fetch all employees
         const result = await executeQuery(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        
+
         res.status(200).json(result.rows);
     } catch (err) {
         console.error('Oracle List Error:', err);
@@ -210,8 +204,8 @@ const list = async (req, res) => {
 const removeAll = async (req, res) => {
     try {
         const sql = `DELETE FROM ${EMPLOYEE_TABLE}`;
-        const result = await executeQuery(sql, [], { autoCommit: true }); 
-        
+        const result = await executeQuery(sql, [], { autoCommit: true });
+
         res.status(200).json({ message: `Successfully deleted ${result.rowsAffected} employee(s).` });
     } catch (err) {
         console.error('Oracle RemoveAll Error:', err);
@@ -220,11 +214,11 @@ const removeAll = async (req, res) => {
 };
 
 module.exports = {
-    employeeByID, 
+    employeeByID,
     read,
     update,
     remove,
-    create, 
+    create,
     list,
     removeAll
 };

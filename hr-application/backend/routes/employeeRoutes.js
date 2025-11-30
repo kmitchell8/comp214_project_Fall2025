@@ -11,6 +11,7 @@ const router = express.Router();
 //authController and userController are left in for future use
 const employeeCtrl = require('../controllers/employeeController');
 
+router.param('employeeId', employeeCtrl.employeeByID);//needed to ensure the id is being seen in the middleware routes
 
 //references CRUD in employeeController //used for ADMIN purposes
 router.route('/')

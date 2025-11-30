@@ -7,7 +7,8 @@
 
 
 
-const oracledb = require('oracledb'); //Needed for binding options
+const oracledb = require('oracledb'); //Needed for binding options//cannot be accessed in the scope of this program
+//I will leave it for future use however it is explicitly called in jobByID to resolve that access issue
 const _ = require('lodash'); //Used for cleaning up request bodies
 const { executeQuery } = require('../db'); //Import Oracle DB utilities 
 
@@ -26,7 +27,8 @@ const jobByID = async (req, res, next, id) => {
             FROM ${JOB_TABLE} 
             WHERE JOB_ID = :id
         `;
-        const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        //const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await executeQuery(sql, [id], { outFormat: require('oracledb').OUT_FORMAT_OBJECT });
 
         const job = result.rows[0];
 
@@ -113,7 +115,7 @@ const update = async (req, res, next) => {
     }
 };
 
-//DELETE: Remove the job
+// DELETE: Remove the job
 const remove = async (req, res, next) => {
     try {
         const jobId = req.job.JOB_ID;
@@ -125,7 +127,7 @@ const remove = async (req, res, next) => {
             return res.status(404).json({ error: "Job not found for deletion." });
         }
 
-        //Return a confirmation message
+        // Return a confirmation message
         res.json({ message: `Job ${jobId} successfully deleted.` });
 
     } catch (err) {
@@ -139,7 +141,7 @@ const remove = async (req, res, next) => {
 
 //General Operations
 
-//POST: Create a new job
+// POST: Create a new job
 const create = async (req, res) => {
     try {
         //Construct the INSERT statement

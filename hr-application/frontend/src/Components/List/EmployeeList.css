@@ -1,0 +1,183 @@
+/*
+ * File Name: Navbar.css
+ * Student’s Name: Kevon Mitchell
+ * Student ID: 301508202
+ * Date: November 28, 2025
+ * AI Assisted Styling (Gemini)
+ */
+
+/* Main Container */
+.employee-table-container {
+    padding: 0.5rem; 
+    background-color: white;
+    overflow-x: auto;
+    box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d; 
+    border-radius: 0.5rem; 
+    border: 0.5px solid #f3f4f6; 
+    width:100%;
+}
+
+/* Header */
+.employee-table-container h1 {
+    font-size: 1.75rem; 
+    font-weight: 800; 
+    color: #1f2937; 
+    margin-bottom: 0.5rem; 
+    border-bottom: 0.5px solid #e5e7eb; 
+    padding-bottom: 0.25rem;
+}
+
+/* Table */
+.employee-table {
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table Head */
+.employee-table thead {
+    background-color: #f9fafb; 
+    border-bottom: 0.5px solid #e5e7eb;
+}
+
+/* Table Header Cells */
+.employee-table th {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem; 
+    font-weight: 500; 
+    color: #6b7280; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em; 
+}
+
+/* Table Body */
+.employee-table tbody {
+    background-color: white;
+}
+
+/* Table Row */
+.employee-table tr {
+    transition: background-color 150ms ease-in-out;
+    cursor: pointer;
+}
+
+.employee-table tr:hover {
+    background-color: #eff6ff; 
+}
+
+/* Table Data Cells */
+.employee-table td {
+    padding: 0.5rem 0.75rem; 
+    white-space: nowrap;
+    font-size: 0.75rem; 
+    color: #1f2937; 
+    border-bottom: 1px solid #e5e7eb; 
+}
+
+/* Editable Input Styling */
+.editable-input {
+    width: 100%; 
+    padding: 0.25rem 0.5rem;
+    border: 0.75px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: #1f2937;
+    box-sizing: border-box; 
+    min-width: 100px; 
+}
+.editable-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+/* Loading/Error/Empty State Containers */
+.info-box {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    max-width: 32rem;
+    text-align: center;
+}
+
+/* SAVE CODE FOR FUTURE USE THIS IS ADVANCED AND NOT APPLICABLE TO THIS PROGRAM
+/* Loading Spinner 
+.loading-spinner {
+    height: 2rem;
+    width: 2rem;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 9999px;
+    border-bottom-color: #3b82f6;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+*/
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 0;
+}
+
+/* Error State */
+.error-box {
+    background-color: #fee2e2; 
+    border: 1px solid #f87171;
+    color: #b91c1c;
+}
+
+.error-box h2 {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-box p {
+    font-size: 0.875rem;
+}
+
+/* Empty State */
+.empty-box {
+    background-color: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #b45309; 
+}
+
+.empty-box p {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+/*Buttons*/ /*all button css is in the univeral index.css imported into main.jsx*/
+/*
+.update-btn ,.update-all-btn, .read-list {
+  background-color: #4CAF50; 
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.update-btn:hover,.update-all-btn:hover,.read-list:hover {
+  background-color: #45a049;
+}
+
+.update-btn:active,.update-all-btn:active,.read-list:active {
+  transform: translateY(1px);
+}
+*/

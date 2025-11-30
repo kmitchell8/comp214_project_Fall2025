@@ -7,7 +7,8 @@
 
 
 
-const oracledb = require('oracledb'); //Needed for binding options
+const oracledb = require('oracledb'); //Needed for binding options//cannot be accessed in the scope of this program
+//I will leave it for future use however it is explicitly called in departmentByID to resolve that access issue
 const _ = require('lodash'); //Used for cleaning up request bodies
 const { executeQuery } = require('../db'); //Import Oracle DB utilities 
 
@@ -26,7 +27,8 @@ const departmentByID = async (req, res, next, id) => {
             FROM ${DEPARTMENT_TABLE} 
             WHERE DEPARTMENT_ID = :id
         `;
-        const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        //const result = await executeQuery(sql, [id], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await executeQuery(sql, [id], { outFormat: require('oracledb').OUT_FORMAT_OBJECT });
 
         const department = result.rows[0];
 
@@ -125,7 +127,7 @@ const remove = async (req, res, next) => {
             return res.status(404).json({ error: "Department not found for deletion." });
         }
 
-        // Return a confirmation message
+        //Return a confirmation message
         res.json({ message: `Department ${departmentId} successfully deleted.` });
 
     } catch (err) {
@@ -142,7 +144,7 @@ const remove = async (req, res, next) => {
 //POST: Create a new department
 const create = async (req, res) => {
     try {
-        // Construct the INSERT statement
+        //Construct the INSERT statement
         const sql = `
             INSERT INTO ${DEPARTMENT_TABLE} (
                 DEPARTMENT_ID, DEPARTMENT_NAME, MANAGER_ID, LOCATION_ID
@@ -153,7 +155,7 @@ const create = async (req, res) => {
 
         //Bind parameters from request body
         const binds = {
-            department_id: req.body.department_id, // Assuming ID is passed or use a sequence in SQL
+            department_id: req.body.department_id, //Assuming ID is passed or use a sequence in SQL
             department_title: req.body.department_name,
             manager_id: req.body.manager_id,
             location_id: req.body.location_id

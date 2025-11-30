@@ -10,7 +10,7 @@ const router = express.Router();
 //const authCtrl = require('../controllers/authController'); //this app is built for future reference
                                                             //authController and userController are left in for future use
 const jobCtrl = require('../controllers/jobController');
-
+router.param('jobId', jobCtrl.jobByID); //needed to ensure the id is being seen in the middleware routes
 
 //references CRUD in jobController //used for ADMIN purposes
 router.route('/')
