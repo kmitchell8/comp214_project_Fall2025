@@ -1,0 +1,114 @@
+//Define Base URL matching your server.js routes
+const DEPARTMENT_URL = '/api/departments'; 
+
+//Authorization & Headers
+
+// Helper to construct headers with the JWT token //leave this in for future reference but it will be set to null
+                                                //when it is called
+const getAuthHeaders = async (getToken ) => {
+    //app allows public access currently so getToken = null optional here //changes in a production site
+    const jwt = getToken  ? await getToken () : null; 
+    
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (jwt) {
+        headers['Authorization'] = `Bearer ${jwt}`;
+    }
+    
+    return headers;
+};
+
+//Standard Fetch Helper
+const fetchHelper = async (url, options) => {
+    try {
+        const response = await fetch(url, options);
+        //Try to parse JSON, handle cases with no body//stops a potential crash
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok) {
+            return data;
+        } else {            
+            const errorMessage = data.error || data.message || `API request failed with status: ${response.status}`;
+            console.error('API call failed:', response.status, data);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Network or Authorization error:', error);
+        throw error; 
+    }
+};
+
+//Department CRUD Operations
+
+//Create a new Department (Uses POST /api/departments)
+const create = async (departmentData, getToken = null) => {//getToken set to Null
+    const headers = await getAuthHeaders(getToken );
+    
+    return fetchHelper(DEPARTMENT_URL, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(departmentData),
+    });        
+};
+
+//List all Departments (Uses GET /api/departments)
+const list = async (getToken = null) => {    
+    //Auth headers added for when list route is protected
+    const headers = await getAuthHeaders(getToken); 
+    return fetchHelper(DEPARTMENT_URL, {
+        method: 'GET',
+        headers: headers
+    });       
+};
+
+//Read one Department (Uses GET /api/departments/:id)
+const read = async (departmentId, getToken = null) => {
+    const headers = await getAuthHeaders(getToken); 
+    const url = `${DEPARTMENT_URL}/${departmentId}`;
+    return fetchHelper(url, {
+        method: 'GET',
+        headers: headers
+    });
+};
+
+//Update Department (Uses PUT /api/departments/:id)
+const update = async (departmentId, departmentData, getToken = null) => {
+    const headers = await getAuthHeaders(getToken);
+    const url = `${DEPARTMENT_URL}/${departmentId}`;
+    return fetchHelper(url, {
+        method: 'PUT',
+        headers: headers, 
+        body: JSON.stringify(departmentData)
+    });
+};
+
+//Delete Department (Uses DELETE /api/departments/:id)
+const remove = async (departmentId, getToken = null) => {
+    const headers = await getAuthHeaders(getToken );
+    const url = `${DEPARTMENT_URL}/${departmentId}`;
+    return fetchHelper(url, {
+        method: 'DELETE',
+        headers: headers,            
+    });
+};
+/*
+//Helper Data for Dropdowns (Managers only) // for future use
+
+// Get Managers list (currently just calls the list all departments endpoint)
+const getManagers = async (getToken = null) => {
+    //This assumes all listed departments can potentially be managers
+    //future use will separte managers' titles to discern and render precisely
+    return list(getToken);
+};
+*/
+export default { 
+    create, 
+    list, 
+    read, 
+    update, 
+    remove,
+    //Export for the Manager Dropdown
+    /*getManagers*/
+};
