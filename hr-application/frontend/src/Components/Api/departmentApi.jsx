@@ -6,7 +6,7 @@ const DEPARTMENT_URL = '/api/departments';
 // Helper to construct headers with the JWT token //leave this in for future reference but it will be set to null
                                                 //when it is called
 const getAuthHeaders = async (getToken ) => {
-    //app allows public access currently so getToken = null optional here //changes in a production site
+    //app allows public access currently so getToken = null currently //changes in a production site where there is a user schema/table
     const jwt = getToken  ? await getToken () : null; 
     
     const headers = {

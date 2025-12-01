@@ -33,7 +33,9 @@ export const PageView = () => {
             return { view: 'home', segments };
         }
 
-        //SEE EmployeeView.jsx FOR EXPLANATION
+        //Assign value to primary segment that is either employee, job or department
+        //makes the Pageview resuable for all pages that have a nested view inside the
+        //parent page view
         if (['employee', 'job', 'department'].includes(primarySegment)) {
             return { view: primarySegment, segments };
         }

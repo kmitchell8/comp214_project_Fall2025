@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 //import { getHash } from '../Api/getPage.jsx'
 import EmployeeList from '../List/EmployeeList.jsx'
-import HiringForm from '../HiringForm/HiringForm.jsx';
+import HiringForm from '../Form/HiringForm.jsx';
 
 
 const EmployeeView = ({ pathSegments: parentSegments = [] }) => {
