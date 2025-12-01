@@ -11,6 +11,7 @@ const oracledb = require('oracledb'); //Needed for binding options//cannot be ac
 //I will leave it for future use however it is explicitly called in jobByID to resolve that access issue
 const _ = require('lodash'); //Used for cleaning up request bodies
 const { executeQuery } = require('../db'); //Import Oracle DB utilities 
+const { executeProcedure } = require('../db');
 
 //Define the name of your job table
 const JOB_TABLE = 'HR_jobs';
@@ -61,7 +62,7 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
     //Collect updates from the request body. Only update fields defined in schema.
     const allowedUpdates = {
-        job_id: req.body.job_id,
+        job_id: req.params.jobId,
         job_title: req.body.job_title,
         min_salary: req.body.min_salary,
         max_salary: req.body.max_salary
@@ -87,7 +88,8 @@ const update = async (req, res, next) => {
         }
 
         //Add the WHERE clause
-        bindParams.id = req.job.JOB_ID;
+        bindParams.id = req.params.jobId;
+        console.log('Bind Parameters for Update:', req.params.jobId);
 
         const updateSql = `
             UPDATE ${JOB_TABLE} 
@@ -103,7 +105,7 @@ const update = async (req, res, next) => {
             FROM ${JOB_TABLE} 
             WHERE JOB_ID = :id
         `;
-        const result = await executeQuery(readSql, [req.job.JOB_ID], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await executeQuery(readSql, [req.params.jobId], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         res.json(result.rows[0]);
 
@@ -173,6 +175,26 @@ const create = async (req, res) => {
     }
 };
 
+//POST: create a new job with stored procedure 
+const createWithProcedure = async (req, res) => {
+    try {
+        const procName = 'SP_NEW_JOB';  
+        const bindParams = {
+            p_jobid: req.body.jobId, 
+            p_title: req.body.jobTitle,
+            p_minsal: req.body.minSalary
+        };
+        await executeProcedure(procName, bindParams, { autoCommit: true });
+
+        res.status(201).json({ message: "Job created successfully via procedure SP_NEW_JOB." });
+    } catch (err) {
+        console.error('Oracle CreateWithProcedure Error:', err);
+        return res.status(400).json({
+            error: "Could not create job via procedure: " + err.message
+        });
+    }
+};
+
 //GET: List all jobs
 const list = async (req, res) => {
     try {
@@ -210,6 +232,7 @@ module.exports = {
     update,
     remove,
     create,
+    createWithProcedure,
     list,
     removeAll
 };

@@ -67,6 +67,7 @@ async function executeQuery(sql, bindParams = [], options = {}) {
         
         // Execute the SQL statement
         const result = await connection.execute(sql, bindParams, options);
+        await connection.commit(); // Commit if there are any changes
         return result;
     } catch (err) {
         console.error('Database query error:', err);
@@ -74,6 +75,28 @@ async function executeQuery(sql, bindParams = [], options = {}) {
     } finally {
         if (connection) {
             // Release the connection back to the pool, whether the query succeeded or failed
+            await connection.close(); 
+        }
+    }
+}
+
+//execute stored procedure
+async function executeProcedure(procName, bindParams = {}, options = {}) {
+    let connection;
+    try {
+        // Get an available connection from the pool
+        connection = await oracledb.getConnection();
+        const sql = `BEGIN ${procName}(${Object.keys(bindParams).map(key => `:${key}`).join(', ')}); END;`;
+        // Execute the stored procedure
+        const result = await connection.execute(sql, bindParams, options);
+        await connection.commit(); // Commit if there are any changes
+        return result;
+    } catch (err) {
+        console.error('Database procedure error:', err);
+        throw err; // Re-throw the error so the route handler can catch it
+    } finally {
+        if (connection) {
+            // Release the connection back to the pool, whether the procedure succeeded or failed
             await connection.close(); 
         }
     }
@@ -90,5 +113,5 @@ async function closePool() {
     }
 }
 
-module.exports = { initialize, comparePassword, hashPassword, executeQuery, closePool};
+module.exports = { initialize, comparePassword, hashPassword, executeQuery, executeProcedure, closePool};
 
