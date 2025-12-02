@@ -44,7 +44,7 @@ const employeeByID = async (req, res, next, id) => {
         next();
     } catch (err) {
         console.error('Oracle employeeByID Error:', err);
-        return res.status(400).json({
+        return res.status(500).json({
             error: "Could not retrieve employee: " + err.message
         });
     }
@@ -62,7 +62,7 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
     //Collect updates from the request body. Only update fields defined in schema.
     const allowedUpdates = {
-        EMAIL: req.body.EMAIL, 
+        EMAIL: req.body.EMAIL,
         PHONE_NUMBER: req.body.PHONE_NUMBER,
         SALARY: req.body.SALARY,
     };
@@ -82,9 +82,9 @@ const update = async (req, res, next) => {
         //Process field updates
         for (const [key, value] of Object.entries(updates)) {
             const paramName = `p${bindCount++}`;
-           // updateSqlParts.push(`${key.toUpperCase()} = :${paramName}`);//redundant after formatting "allowedupdates" but i'll leave it in
-           updateSqlParts.push(`${key} = :${paramName}`); 
-           bindParams[paramName] = value;
+            // updateSqlParts.push(`${key.toUpperCase()} = :${paramName}`);//redundant after formatting "allowedupdates" but i'll leave it in
+            updateSqlParts.push(`${key} = :${paramName}`);
+            bindParams[paramName] = value;
         }
 
         //Add the WHERE clause
@@ -110,9 +110,16 @@ const update = async (req, res, next) => {
         res.json(result.rows[0]);
 
     } catch (err) {
+        if (err.message.includes('-20100')) {//Catch trigger error
+            const triggerErroMsg = err.message.split('ORA-20100:')[1].trim();//storing the error message
+            return res.status(400).json({
+                error: "Validation Error",
+                details: triggerErroMsg
+            })
+        }
         console.error('Oracle Update Error:', err);
-        return res.status(400).json({
-            error: "Could not update employee: " + err.message
+        return res.status(500).json({
+            error: "Could not update employee"
         });
     }
 };
@@ -134,8 +141,8 @@ const remove = async (req, res, next) => {
 
     } catch (err) {
         console.error('Oracle Delete Error:', err);
-        return res.status(400).json({
-            error: "Could not delete employee: " + err.message
+        return res.status(500).json({
+            error: "Could not delete employee"
         });
     }
 };
@@ -173,10 +180,17 @@ const create = async (req, res) => {
 
         res.status(201).json({ message: "Employee hired successfully." });
 
-    } catch (err) {
+    } catch (err) {//retain code for future use in implimenting triggers in an express envrioinment
+        if (err.message.includes('-20100')) {//Catch trigger error
+            const triggerErroMsg = err.message.split('ORA-20100:')[1].trim();//storing the error message
+            return res.status(400).json({
+                error: "Validation Error",
+                details: triggerErroMsg
+            })
+        }
         console.error('Oracle Create Error:', err);
-        return res.status(400).json({
-            error: "Could not hire employee with this procedure: " + err.message
+        return res.status(500).json({
+            error: "Could not hire employee, please try again."
         });
     }
 };

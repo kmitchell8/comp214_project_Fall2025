@@ -44,8 +44,8 @@ const jobByID = async (req, res, next, id) => {
         next();
     } catch (err) {
         console.error('Oracle jobByID Error:', err);
-        return res.status(400).json({
-            error: "Could not retrieve job: " + err.message
+        return res.status(500).json({
+            error: "Could not retrieve job"
         });
     }
 };
@@ -62,10 +62,10 @@ const read = (req, res) => {
 const update = async (req, res, next) => {
     //Collect updates from the request body. Only update fields defined in schema.
     const allowedUpdates = {
-        job_id: req.params.jobId,
-        job_title: req.body.job_title,
-        min_salary: req.body.min_salary,
-        max_salary: req.body.max_salary
+        //job_id: req.params.jobId, to maintain consitency
+        JOB_TITLE: req.body.JOB_TITLE,
+        MIN_SALARY: req.body.MIN_SALARY,
+        MAX_SALARY: req.body.MAX_SALARY
     };
 
     //Filter out undefined/null values
@@ -111,8 +111,8 @@ const update = async (req, res, next) => {
 
     } catch (err) {
         console.error('Oracle Update Error:', err);
-        return res.status(400).json({
-            error: "Could not update job: " + err.message
+        return res.status(500).json({
+            error: "Could not update job"
         });
     }
 };
@@ -134,8 +134,8 @@ const remove = async (req, res, next) => {
 
     } catch (err) {
         console.error('Oracle Delete Error:', err);
-        return res.status(400).json({
-            error: "Could not delete job: " + err.message
+        return res.status(500).json({
+            error: "Could not delete job"
         });
     }
 };
@@ -169,8 +169,8 @@ const create = async (req, res) => {
 
     } catch (err) {
         console.error('Oracle Create Error:', err);
-        return res.status(400).json({
-            error: "Could not create job: " + err.message
+        return res.status(500).json({
+            error: "Could not create job"
         });
     }
 };
@@ -189,8 +189,8 @@ const createWithProcedure = async (req, res) => {
         res.status(201).json({ message: "Job created successfully via procedure SP_NEW_JOB." });
     } catch (err) {
         console.error('Oracle CreateWithProcedure Error:', err);
-        return res.status(400).json({
-            error: "Could not create job via procedure: " + err.message
+        return res.status(500).json({
+            error: "Could not create job via procedure"
         });
     }
 };

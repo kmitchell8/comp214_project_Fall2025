@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Form.css'
 
 const CreateJob = () => {
     const [formData, setFormData] = useState({
@@ -57,7 +58,7 @@ const CreateJob = () => {
                 throw new Error('Failed to create job');
             }
 
-            const data = await response.json();
+           // const data = await response.json(); //Not currently in use (in case of submit failure check line)
             setSuccess(`Job created successfully! Job ID: ${formData.jobId}`);
             setFormData({
                 jobId: '',

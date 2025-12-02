@@ -7,7 +7,8 @@
 
 
 /* Outer Wrapper and Form Container */
-
+/*css moved to index.css*/
+/*====================================================
 .job-container {
     padding: 2rem;
     margin-top: 100px;
@@ -28,7 +29,8 @@
     padding: 10px;
     
 }
-
+=================================================*/
+/*
 .job-form {
     padding: 2rem;
     max-width: 960px; 
@@ -53,7 +55,7 @@
 }
 
 
-/* Row Layouts (Three columns for main rows) */
+/* Row Layouts (Three columns for main rows) 
 .form-row {
     display: block;
     gap: 1rem; 
@@ -70,7 +72,7 @@
     flex: 1 1 50%;
 }
 
-/* Input Fields (TextBoxes and Selects) */
+/* Input Fields (TextBoxes and Selects) 
 .input-label {
     display: block;
     font-size: 0.875rem;
@@ -92,7 +94,7 @@
 }
 
 
-/* Linked Dropdown Sections */
+/* Linked Dropdown Sections 
 .linked-dropdown-section {
     border: 1px solid black;
     padding: 0.75rem;
@@ -106,7 +108,7 @@
     color: #1f2937; 
 }
 
-/* Button Row */
+/* Button Row 
 
 .button-row {
     display: flex;
@@ -140,7 +142,7 @@
     background-color: #bfdbfe; 
 }
 
-/* Feedback Message Styles*/
+/* Feedback Message Styles
 .feedback-base {
     padding: 0.75rem;
     margin-bottom: 1rem;
@@ -160,4 +162,4 @@
     background-color: #d1fae5;
     color: #065f46;
     border-color: #6ee7b7; 
-}
+}*/

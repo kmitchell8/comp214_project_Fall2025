@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import employeeApi from '../Api/employeeApi';
-import './HiringForm.css'
+import './Form.css'
 
 const mockGetToken = async () => {
     //When you authentication enabled, this function will fetch 

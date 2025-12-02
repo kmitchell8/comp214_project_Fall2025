@@ -3,9 +3,9 @@ import { getHash } from '../Api/getPage.jsx'
 import Navbar from '../Navbar/Navbar.jsx'
 import Home from '../Home/Home.jsx'
 //import Employee from '../Employee/Employee.jsx'
-import Job from '../Job/Job.jsx'
+import Job from './jobView.jsx'
 import Department from '../Department/Department.jsx'
-import EmployeeView from '../authState/EmployeeView.jsx'
+import EmployeeView from './EmployeeView.jsx'
 
 
 export const PageView = () => {

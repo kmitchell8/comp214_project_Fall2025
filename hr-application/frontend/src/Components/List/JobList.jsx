@@ -3,7 +3,7 @@ import './JobList.css'
 import jobApi from '../Api/jobApi';
 
 
-const formatCurrency = (amount) => {
+const _formatCurrency = (amount) => { //currently not in use (remove _ to activate if needed)
     //Ensure only numbers are formatted
     if (typeof amount !== 'number') return amount;
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', minimumFractionDigits: 0 }).format(amount);

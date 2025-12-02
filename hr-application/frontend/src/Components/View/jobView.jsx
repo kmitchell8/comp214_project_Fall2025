@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import './Job.css'
-import SearchJob from './SearchJob'
-import UpdateJob from './UpdateJob'
-import CreateJob from './CreateJob'
-import JobList from './JobList'
+//import './Job.css'
+import '../../index.css'
+import SearchJob from '../Job/SearchJob.jsx'
+//import UpdateJob from './UpdateJob'
+import CreateJob from '../Form/CreateJob.jsx'//Form for creating a new job
+import JobList from '../List/JobList.jsx'
 import { getHash } from '../Api/getPage.jsx'
 
+//Another method to embed a view inside a view //simply get the hash from the subview itself instead of passng it from the main primary view
 const Job = () => {
   const getInitialSubView = useCallback(() => {
     const hash = getHash();
@@ -26,13 +28,26 @@ const Job = () => {
     };
   }, [getInitialSubView]);
 
+  const NavigationLinks = () => {
+    return (
+      <div>
+        {currentSubView !== 'list' && (
+          <button onClick={() => window.location.hash = 'job'}
+            className="button-group"
+          >
+            Go Back
+          </button>
+        )}
+      </div>
+    );
+  };
   const renderSubView = () => {
     switch (currentSubView) {
-      case 'searchJob':
+      case 'search':
         return <SearchJob />;
-      case 'updateJob':
+      case 'update':
         return <JobList />;
-      case 'createJob':
+      case 'create':
         return <CreateJob />;
       case 'list':
       default:
@@ -40,25 +55,33 @@ const Job = () => {
           <div className='job-container'>
             <div className='job'>
               <h3>
-                <a href="#/job/searchJob">Search a Job</a>
+                <a href="#/job/search">Search a Job</a>
               </h3>
             </div>
             <div className='job'>
               <h3>
-                <a href="#/job/updateJob">Update a Job</a>
+                <a href="#/job/update">Update a Job</a>
               </h3>
             </div>
             <div className='job'>
               <h3>
-                <a href="#/job/createJob">Create a Job</a>
+                <a href="#/job/create">Create a Job</a>
               </h3>
             </div>
           </div>
         );
     }
   };
+  return (
+    <div className="min-h-screen"> {/*tail-wind css min-h(min-height) and screen(100vh)*/}
 
-  return <>{renderSubView()}</>;
+      <main className="render-view">
+        {renderSubView()}
+        <NavigationLinks />
+      </main>
+    </div>
+  );
+  // return <>{renderSubView()}</>;
 }
 
 export default Job
