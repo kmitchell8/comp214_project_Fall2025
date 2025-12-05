@@ -1,8 +1,8 @@
 /*
  * File Name: departmentController.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025
  */
 
 
@@ -41,10 +41,10 @@ const departmentByID = async (req, res, next, id) => {
         //Attach the found department object to the request.
         req.department = department;
         next();
-    } catch (err) {
-        console.error('Oracle departmentByID Error:', err);
+    } catch (error) {
+        console.error('Oracle departmentByID Error:', error);
         return res.status(400).json({
-            error: "Could not retrieve department: " + err.message
+            error: "Could not retrieve department: " + error.message
         });
     }
 };
@@ -107,10 +107,10 @@ const update = async (req, res, next) => {
 
         res.json(result.rows[0]);
 
-    } catch (err) {
-        console.error('Oracle Update Error:', err);
+    } catch (error) {
+        console.error('Oracle Update Error:', error);
         return res.status(400).json({
-            error: "Could not update department: " + err.message
+            error: "Could not update department: " + error.message
         });
     }
 };
@@ -130,10 +130,10 @@ const remove = async (req, res, next) => {
         //Return a confirmation message
         res.json({ message: `Department ${departmentId} successfully deleted.` });
 
-    } catch (err) {
-        console.error('Oracle Delete Error:', err);
+    } catch (error) {
+        console.error('Oracle Delete Error:', error);
         return res.status(400).json({
-            error: "Could not delete department: " + err.message
+            error: "Could not delete department: " + error.message
         });
     }
 };
@@ -165,10 +165,10 @@ const create = async (req, res) => {
 
         res.status(201).json({ message: "Department created successfully." });
 
-    } catch (err) {
-        console.error('Oracle Create Error:', err);
+    } catch (error) {
+        console.error('Oracle Create Error:', error);
         return res.status(400).json({
-            error: "Could not create department: " + err.message
+            error: "Could not create department: " + error.message
         });
     }
 };
@@ -185,9 +185,9 @@ const list = async (req, res) => {
         const result = await executeQuery(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         res.status(200).json(result.rows);
-    } catch (err) {
-        console.error('Oracle List Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle List Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -198,9 +198,9 @@ const removeAll = async (req, res) => {
         const result = await executeQuery(sql, [], { autoCommit: true });
 
         res.status(200).json({ message: `Successfully deleted ${result.rowsAffected} department(s).` });
-    } catch (err) {
-        console.error('Oracle RemoveAll Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle RemoveAll Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 

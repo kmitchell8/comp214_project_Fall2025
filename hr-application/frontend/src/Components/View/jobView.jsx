@@ -3,12 +3,25 @@ import React, { useState, useEffect, useCallback } from 'react'
 import '../../index.css'
 import SearchJob from '../Job/SearchJob.jsx'
 //import UpdateJob from './UpdateJob'
-import CreateJob from '../Form/CreateJob.jsx'//Form for creating a new job
-import JobList from '../List/JobList.jsx'
+import CreateJob from '../Forms/CreateJob.jsx'//Form for creating a new job
+import JobList from '../Lists/JobList.jsx'
 import { getHash } from '../Api/getPage.jsx'
 
-//Another method to embed a view inside a view //simply get the hash from the subview itself instead of passng it from the main primary view
+const NavigationLinks = ({ currentSubView }) => {//need to be outside the render or it will continually lose it's state
+  return (
+    <div>
+      {currentSubView !== 'list' && (
+        <button onClick={() => window.location.hash = 'job'}
+          className="button-group"
+        >
+          Go Back
+        </button>
+      )}
+    </div>
+  );
+};
 const Job = () => {
+  //Another method to embed a view inside a view //simply get the hash from the subview itself instead of passng it from the main primary view
   const getInitialSubView = useCallback(() => {
     const hash = getHash();
     const segments = hash.split('/').filter(s => s !== '');
@@ -28,19 +41,7 @@ const Job = () => {
     };
   }, [getInitialSubView]);
 
-  const NavigationLinks = () => {
-    return (
-      <div>
-        {currentSubView !== 'list' && (
-          <button onClick={() => window.location.hash = 'job'}
-            className="button-group"
-          >
-            Go Back
-          </button>
-        )}
-      </div>
-    );
-  };
+
   const renderSubView = () => {
     switch (currentSubView) {
       case 'search':
@@ -77,7 +78,7 @@ const Job = () => {
 
       <main className="render-view">
         {renderSubView()}
-        <NavigationLinks />
+        <NavigationLinks currentSubView={currentSubView} />
       </main>
     </div>
   );

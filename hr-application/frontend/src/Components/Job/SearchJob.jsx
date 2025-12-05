@@ -23,8 +23,8 @@ const SearchJob = () => {
             }
             const data = await response.json();
             setJobData(data);
-        } catch (err) {
-            setError(err.message || 'Failed to fetch job data');
+        } catch (error) {
+            setError(error.message || 'Failed to fetch job data');
         } finally {
             setLoading(false);
         }

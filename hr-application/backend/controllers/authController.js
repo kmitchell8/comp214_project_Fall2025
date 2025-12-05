@@ -1,8 +1,8 @@
 /*
  * File Name: authController.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025
  */
 
 //const express = require('express');
@@ -74,10 +74,10 @@ const register = async (req, res) => {
             message: 'User registered successfully.'
         });
 
-    } catch (err) {
-        console.error('Oracle Registration Error:', err);
+    } catch (error) {
+        console.error('Oracle Registration Error:', error);
         //Handle constraint violations or other SQL errors
-        res.status(500).json({ error: "Registration failed due to a server error: " + err.message });
+        res.status(500).json({ error: "Registration failed due to a server error: " + error.message });
     }
 };
 
@@ -124,9 +124,9 @@ const signin = async (req, res) => {
             user: userObject
         });
 
-    } catch (err) {
-        console.error('Oracle Signin Error:', err);
-        return res.status(500).json({ error: "Could not sign in: " + err.message });
+    } catch (error) {
+        console.error('Oracle Signin Error:', error);
+        return res.status(500).json({ error: "Could not sign in: " + error.message });
     }
 };
 

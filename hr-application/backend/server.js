@@ -1,8 +1,8 @@
 /*
  * File Name: server.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025 
  */
 
 //import express from 'express'; //using tpye: "module"
@@ -42,12 +42,12 @@ app.get('/', (req, res,) => {
     res.status(200).json({ "message": "Any message indicating the server is working" }); //may not be necessary once front end is established
 });
 
-app.use((err, req, res, next) => {
-    if (err.name === 'UnauthorizedError') {
-        res.status(401).json({ "error": err.name + ": " + err.message })
-    } else if (err) {
-        res.status(400).json({ "error": err.name + ": " + err.message })
-        console.log(err)
+app.use((error, req, res, next) => {
+    if (error.name === 'UnauthorizedError') {
+        res.status(401).json({ "error": error.name + ": " + error.message })
+    } else if (error) {
+        res.status(400).json({ "error": error.name + ": " + error.message })
+        console.log(error)
     }
 })
 

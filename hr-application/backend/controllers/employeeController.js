@@ -1,8 +1,8 @@
 /*
  * File Name: employeeController.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025
  */
 
 
@@ -10,9 +10,16 @@ const oracledb = require('oracledb'); //Needed for binding options //cannot be a
 //I will leave it for future use however it is explicitly called in employeeByID to resolve that access issue
 const _ = require('lodash'); //Used for cleaning up request bodies
 const { executeQuery } = require('../db'); //Import Oracle DB utilities 
+//const util = require('util');
 
 //Define the name of your employee table
 const EMPLOYEE_TABLE = 'HR_employees';
+
+//ERROR ORA - CODE
+const universalORAFinder = /ORA-\d{5}/ //regex for all ORA-##### codes
+const stackTraceSplit = 'ORA-06512'; //use this to isolate the message
+//replace previous error message with detailed message (either ORA-### or Error:)
+const universalRegexCleanup = /^(Error: |ORA-\d{5}:?\s*)/i;
 
 //Core Parameter Middleware
 
@@ -42,10 +49,10 @@ const employeeByID = async (req, res, next, id) => {
         //Attach the found employee object to the request.
         req.employee = employee;
         next();
-    } catch (err) {
-        console.error('Oracle employeeByID Error:', err);
+    } catch (error) {
+        console.error('Oracle employeeByID Error:', error);
         return res.status(500).json({
-            error: "Could not retrieve employee: " + err.message
+            error: "Could not retrieve employee: " + error.message
         });
     }
 };
@@ -109,18 +116,51 @@ const update = async (req, res, next) => {
 
         res.json(result.rows[0]);
 
-    } catch (err) {
-        if (err.message.includes('-20100')) {//Catch trigger error
-            const triggerErroMsg = err.message.split('ORA-20100:')[1].trim();//storing the error message
+
+    } catch (error) {//retain code for future use in implimenting triggers in an express envrioinment
+        //const errorString = JSON.stringify(error);//attempting to make sure the ORAFinder truly universal
+        //catching all codes regardless of formatting //one of these should work -\()/-
+        //const errorString = `${error.message || ''} ${error.details || ''} ${error.errorDetails ? JSON.stringify(error.errorDetails) : ''}`;
+        //const errorString = `${error.message || ''} ${error.details || ''} ${error.code || ''}`;
+        //after using the inspect function from npm install util this is the final solution
+        //leaving code for future trouble shooting
+        const messageSource = error.message || error.code || ''; //getting the raw message property from the alert
+        const errorString = `${messageSource} ${error.details || ''}`;
+
+        if (errorString.search(universalORAFinder) != -1) {
+            //let detailedMessage = error.message.split(stackTraceSplit)[0];
+            //parse the source of the ORA error (the details field that will be sent to API)
+            // let parseDetails = error.message || error.details || errorString;
+
+            let normalizedMessage = messageSource.replace(/\s+/g, ' ').trim();
+            let detailedMessage = normalizedMessage.split(stackTraceSplit)[0];
+            //replace previous error message with detailed message (either ORA-### or Error:)
+            //const universalRegexCleanup = /^(Error: |ORA-\d{5}:?\s*)/i;
+
+            detailedMessage = detailedMessage.replace(universalRegexCleanup, '').trim();
             return res.status(400).json({
                 error: "Validation Error",
-                details: triggerErroMsg
+                details: detailedMessage
+
             })
         }
-        console.error('Oracle Update Error:', err);
-        return res.status(500).json({
-            error: "Could not update employee"
-        });
+
+        //ALTERNATIVE (work in progress - only works for ORA-20100 currently)
+        /*if (error.message.includes(/ORA-\d{5}:/)) {//Catch trigger error
+            const stackTraceSplit = /ORA-\d{5}:/; //enables this code to catch universal error messages
+                                                //
+            const triggerErroMsg = error.message.split(stackTraceSplit)[0].trim();//storing the error message
+            return res.status(400).json({
+                error: "Validation Error", //looks like this will have to be set on the client side 
+                //see HiringForm.jsx -->{handleHire} via employeeApi -->{fetchHelper}
+                //error: `Validation Error: ${triggerErroMsg}`,
+                details: triggerErroMsg
+            })
+        }*/
+        //  console.error('Oracle Update Error:', error); //Fallback error message
+        // return res.status(500).json({
+        //     error: "Could not update employee"
+        //  });
     }
 };
 
@@ -139,8 +179,8 @@ const remove = async (req, res, next) => {
         //Return a confirmation message
         res.json({ message: `Employee ${employeeId} successfully deleted.` });
 
-    } catch (err) {
-        console.error('Oracle Delete Error:', err);
+    } catch (error) {
+        console.error('Oracle Delete Error:', error);
         return res.status(500).json({
             error: "Could not delete employee"
         });
@@ -180,15 +220,26 @@ const create = async (req, res) => {
 
         res.status(201).json({ message: "Employee hired successfully." });
 
-    } catch (err) {//retain code for future use in implimenting triggers in an express envrioinment
-        if (err.message.includes('-20100')) {//Catch trigger error
-            const triggerErroMsg = err.message.split('ORA-20100:')[1].trim();//storing the error message
+    } catch (error) {//retain code for future use in implimenting triggers in an express envrioinment
+        const messageSource = error.message || error.code || ''; //getting the raw message property from the alert
+        const errorString = `${messageSource} ${error.details || ''}`;
+
+        if (errorString.search(universalORAFinder) != -1) {
+            //see const update function for full solutions
+
+            let normalizedMessage = messageSource.replace(/\s+/g, ' ').trim();
+            let detailedMessage = normalizedMessage.split(stackTraceSplit)[0];
+            //replace previous error message with detailed message (either ORA-### or Error:)
+            //const universalRegexCleanup = /^(Error: |ORA-\d{5}:?\s*)/i;
+
+            detailedMessage = detailedMessage.replace(universalRegexCleanup, '').trim();
             return res.status(400).json({
-                error: "Validation Error",
-                details: triggerErroMsg
+                error: "Validation Error", //fall back message
+                details: detailedMessage
+
             })
         }
-        console.error('Oracle Create Error:', err);
+        console.error('Oracle Create Error:', error);//fallback message
         return res.status(500).json({
             error: "Could not hire employee, please try again."
         });
@@ -208,9 +259,9 @@ const list = async (req, res) => {
         const result = await executeQuery(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         res.status(200).json(result.rows);
-    } catch (err) {
-        console.error('Oracle List Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle List Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -221,9 +272,9 @@ const removeAll = async (req, res) => {
         const result = await executeQuery(sql, [], { autoCommit: true });
 
         res.status(200).json({ message: `Successfully deleted ${result.rowsAffected} employee(s).` });
-    } catch (err) {
-        console.error('Oracle RemoveAll Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle RemoveAll Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 

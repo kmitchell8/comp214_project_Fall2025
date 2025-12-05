@@ -54,8 +54,8 @@ export const AuthProvider = ({ children }) => {
         try {
             //call the server API to invalidate the session/cookie
            await signOut();
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
         } finally {
             //clear local storage
             localStorage.removeItem('jwt');

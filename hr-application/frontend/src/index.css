@@ -1,3 +1,10 @@
+/*
+ * File Name: Navbar.css
+ * Student’s Name: Kevon Mitchell
+ * Student ID: 301508202
+ * Date: November 28, 2025
+ */
+
 * {
   margin: 0;
   padding: 0;
@@ -40,7 +47,7 @@ authContext.css
 Buttons
 ===========*/
 .button-group {
-  background-color: #4CAF50; 
+  background-color: #4CAF50;
   border: none;
   color: white;
   padding: 8px 16px;
@@ -66,24 +73,49 @@ Buttons
 jobView.jsx
 =====================*/
 .job-container {
-    padding: 2rem;
-    margin-top: 100px;
-    max-width: 960px; 
-    margin-left: auto;
-    margin-right: auto;
+  padding: 2rem;
+  margin-top: 100px;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.job{
-    padding: 2rem;
-    display: flex;
-    max-width: fit-content;
-    justify-content: space-center;
-    margin-top: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    height: 50px;
-    padding: 10px;
-    
+.job {
+  padding: 2rem;
+  display: flex;
+  max-width: fit-content;
+  justify-content: space-center;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 50px;
+  padding: 10px;
+
+}
+
+/*=====================================
+*Universal Feeback Message for all input forms/lists EmployeeList.jsx, HiringForm.jsx
+* Feedback Message Styles
+============================================*/
+.feedback-base {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-width: 1px;
+}
+
+.feedback-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.feedback-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #6ee7b7;
 }
 
 /*===========================*/

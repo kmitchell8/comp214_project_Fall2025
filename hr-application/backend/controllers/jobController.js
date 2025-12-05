@@ -1,8 +1,8 @@
 /*
  * File Name: jobController.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025
  */
 
 
@@ -42,8 +42,8 @@ const jobByID = async (req, res, next, id) => {
         //Attach the found job object to the request.
         req.job = job;
         next();
-    } catch (err) {
-        console.error('Oracle jobByID Error:', err);
+    } catch (error) {
+        console.error('Oracle jobByID Error:', error);
         return res.status(500).json({
             error: "Could not retrieve job"
         });
@@ -109,8 +109,8 @@ const update = async (req, res, next) => {
 
         res.json(result.rows[0]);
 
-    } catch (err) {
-        console.error('Oracle Update Error:', err);
+    } catch (error) {
+        console.error('Oracle Update Error:', error);
         return res.status(500).json({
             error: "Could not update job"
         });
@@ -132,8 +132,8 @@ const remove = async (req, res, next) => {
         // Return a confirmation message
         res.json({ message: `Job ${jobId} successfully deleted.` });
 
-    } catch (err) {
-        console.error('Oracle Delete Error:', err);
+    } catch (error) {
+        console.error('Oracle Delete Error:', error);
         return res.status(500).json({
             error: "Could not delete job"
         });
@@ -167,8 +167,8 @@ const create = async (req, res) => {
 
         res.status(201).json({ message: "Job created successfully." });
 
-    } catch (err) {
-        console.error('Oracle Create Error:', err);
+    } catch (error) {
+        console.error('Oracle Create Error:', error);
         return res.status(500).json({
             error: "Could not create job"
         });
@@ -187,8 +187,8 @@ const createWithProcedure = async (req, res) => {
         await executeProcedure(procName, bindParams, { autoCommit: true });
 
         res.status(201).json({ message: "Job created successfully via procedure SP_NEW_JOB." });
-    } catch (err) {
-        console.error('Oracle CreateWithProcedure Error:', err);
+    } catch (error) {
+        console.error('Oracle CreateWithProcedure Error:', error);
         return res.status(500).json({
             error: "Could not create job via procedure"
         });
@@ -207,9 +207,9 @@ const list = async (req, res) => {
         const result = await executeQuery(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         res.status(200).json(result.rows);
-    } catch (err) {
-        console.error('Oracle List Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle List Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -220,9 +220,9 @@ const removeAll = async (req, res) => {
         const result = await executeQuery(sql, [], { autoCommit: true });
 
         res.status(200).json({ message: `Successfully deleted ${result.rowsAffected} job(s).` });
-    } catch (err) {
-        console.error('Oracle RemoveAll Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle RemoveAll Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 

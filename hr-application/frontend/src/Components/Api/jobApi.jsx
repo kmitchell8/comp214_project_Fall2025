@@ -29,8 +29,8 @@ const fetchHelper = async (url, options) => {
 
         if (response.ok) {
             return data;
-        } else {            
-            const errorMessage = data.error || data.message || `API request failed with status: ${response.status}`;
+        } else {        //explicitly include details errorfield from     
+            const errorMessage =  data.error || data.message || `API request failed with status: ${response.status}`;
             console.error('API call failed:', response.status, data);
             throw new Error(errorMessage);
         }

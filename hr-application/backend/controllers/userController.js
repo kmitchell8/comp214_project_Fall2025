@@ -1,8 +1,8 @@
 /*
  * File Name: userController.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025
  */
 
 const oracledb = require('oracledb'); // Needed for binding options
@@ -38,10 +38,10 @@ const userByID = async (req, res, next, id) => {
         // Attach the found user object to the request. (No need to strip password as we excluded it in the SQL)
         req.profile = user;
         next();
-    } catch (err) {
-        console.error('Oracle userByID Error:', err);
+    } catch (error) {
+        console.error('Oracle userByID Error:', error);
         return res.status(400).json({
-            error: "Could not retrieve user: " + err.message
+            error: "Could not retrieve user: " + error.message
         });
     }
 };
@@ -113,10 +113,10 @@ const update = async (req, res, next) => {
         
         res.json(result.rows[0]);
 
-    } catch (err) {
-        console.error('Oracle Update Error:', err);
+    } catch (error) {
+        console.error('Oracle Update Error:', error);
         return res.status(400).json({
-            error: "Could not update user: " + err.message
+            error: "Could not update user: " + error.message
         });
     }
 };
@@ -136,10 +136,10 @@ const remove = async (req, res, next) => {
         // Return a confirmation message
         res.json({ message: `User ${userId} successfully deleted.`});
 
-    } catch (err) {
-        console.error('Oracle Delete Error:', err);
+    } catch (error) {
+        console.error('Oracle Delete Error:', error);
         return res.status(400).json({
-            error: "Could not delete user: " + err.message
+            error: "Could not delete user: " + error.message
         });
     }
 };
@@ -167,9 +167,9 @@ const list = async (req, res) => {
         const result = await executeQuery(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
         
         res.status(200).json(result.rows);
-    } catch (err) {
-        console.error('Oracle List Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle List Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -181,9 +181,9 @@ const removeAll = async (req, res) => {
         const result = await executeQuery(sql, [], { autoCommit: true }); 
         
         res.status(200).json({ message: `Successfully deleted ${result.rowsAffected} user(s).` });
-    } catch (err) {
-        console.error('Oracle RemoveAll Error:', err);
-        res.status(500).json({ message: err.message });
+    } catch (error) {
+        console.error('Oracle RemoveAll Error:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 

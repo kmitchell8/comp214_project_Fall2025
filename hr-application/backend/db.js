@@ -1,8 +1,8 @@
 /*
  * File Name: db.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025 
  */
 
 
@@ -26,8 +26,8 @@ async function initialize() {
         // attempts to connect using credentials credentials
         await oracledb.createPool(dbConfig);
         console.log('Oracle Connection Pool created successfully!');
-    } catch (err) {
-        console.error('Error creating pool:', err);
+    } catch (error) {
+        console.error('Error creating pool:', error);
         //usually throws if it can't find the instant client library
         //exits applicatoin if failure on startup with error code(1)
         process.exit(1); 
@@ -40,8 +40,8 @@ async function hashPassword(password) {
     try {
         //key reminder: deliberate, slow, asynchronous operation for security.
         return await bcrypt.hash(password, SALT_ROUNDS);
-    } catch (err) {
-        console.error("Bcrypt hashing error:", err);
+    } catch (error) {
+        console.error("Bcrypt hashing error:", error);
         throw new Error("Password hashing failed.");
     }
 }
@@ -52,8 +52,8 @@ async function comparePassword(password, hash) {
     try {
         // key note: deliberate, slow, asynchronous operation for security.
         return await bcrypt.compare(password, hash);
-    } catch (err) {
-        console.error("Bcrypt comparison error:", err);
+    } catch (error) {
+        console.error("Bcrypt comparison error:", error);
         return false;
     }
 }
@@ -69,9 +69,9 @@ async function executeQuery(sql, bindParams = [], options = {}) {
         const result = await connection.execute(sql, bindParams, options);
         await connection.commit(); // Commit if there are any changes
         return result;
-    } catch (err) {
-        console.error('Database query error:', err);
-        throw err; // Re-throw the error so the route handler can catch it
+    } catch (error) {
+        console.error('Database query error:', error);
+        throw error; // Re-throw the error so the route handler can catch it
     } finally {
         if (connection) {
             // Release the connection back to the pool, whether the query succeeded or failed
@@ -91,9 +91,9 @@ async function executeProcedure(procName, bindParams = {}, options = {}) {
         const result = await connection.execute(sql, bindParams, options);
         await connection.commit(); // Commit if there are any changes
         return result;
-    } catch (err) {
-        console.error('Database procedure error:', err);
-        throw err; // Re-throw the error so the route handler can catch it
+    } catch (error) {
+        console.error('Database procedure error:', error);
+        throw error; // Re-throw the error so the route handler can catch it
     } finally {
         if (connection) {
             // Release the connection back to the pool, whether the procedure succeeded or failed
@@ -108,8 +108,8 @@ async function closePool() {
         // Closes all connections in the pool with code(0)
         await oracledb.getPool().close(0); // 
         console.log('Oracle Connection Pool closed safely.');
-    } catch (err) {
-        console.error('Error closing pool:', err);
+    } catch (error) {
+        console.error('Error closing pool:', error);
     }
 }
 

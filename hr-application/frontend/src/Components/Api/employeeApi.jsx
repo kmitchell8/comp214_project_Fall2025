@@ -29,10 +29,16 @@ const fetchHelper = async (url, options) => {
 
         if (response.ok) {
             return data;
-        } else {            
-            const errorMessage = data.error || data.message || `API request failed with status: ${response.status}`;
+        } else {             //explicitly include details error field from  backend to pass to HiringForm.jsx -->{handleHire} 
+                            //see employeeContainer.js -->{update, create}
+            const errorMessage = data.details || data.error?.["Validation Error:"] ||data.error || data.message || `API request failed with status: ${response.status}`;
+            const errorCheck = new Error(errorMessage)
+            errorCheck.details = data.details
+            errorCheck.response = data;
+
             console.error('API call failed:', response.status, data);
-            throw new Error(errorMessage);
+            //throw new Error(errorCheck);
+            throw errorCheck;
         }
     } catch (error) {
         console.error('Network or Authorization error:', error);

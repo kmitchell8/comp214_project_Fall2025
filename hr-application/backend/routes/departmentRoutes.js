@@ -1,8 +1,8 @@
 /*
  * File Name: departmentRoutes.js
- * Author(s): 
- * Student ID (s): 
- * Date: 
+ * Author(s): Kevon Mitchell    
+ * Student ID (s): 301508202
+ * Date: December 05, 2025 
  */
 
 const express = require('express');
